@@ -1,33 +1,19 @@
-
-
 from typing import Optional
 from pydantic import BaseModel, EmailStr, Field
 
 
-# =========================================================
-# BASE / SHARED FIELDS (inheritance ke liye)
-# =========================================================
-
 class OrderIdMixin(BaseModel):
-    """Jahan bhi sirf razorpay_order_id chahiye, yahan se inherit karo."""
     razorpay_order_id: str = Field(..., description="Razorpay Order ID (order_XXXX format)")
 
 
 class CustomerInfoMixin(BaseModel):
-    """Customer ke basic details -- create_order aur create_invoice dono mein same hain."""
-    name: str = Field(..., min_length=1, max_length=100, description="Customer ka poora naam")
-    email: EmailStr = Field(..., description="Customer ka email address")
+    name: str = Field(..., min_length=1, max_length=100, description="Customer full name")
+    email: EmailStr = Field(..., description="Customer email address")
     address: str = Field(default="", max_length=500, description="Address (optional)")
-    amount: float = Field(..., gt=0, description="Payment amount INR mein")
+    amount: float = Field(..., gt=0, description="Payment amount in INR")
 
-
-# =========================================================
-# INVOICE -- FIRST STEP (ab payment se pehle invoice banta hai)
-# =========================================================
 
 class CreateInvoiceRequest(CustomerInfoMixin):
-    """POST /api/payment/create-invoice -- amount, name, email, address CustomerInfoMixin se aate hain."""
-
     class Config:
         json_schema_extra = {
             "example": {
@@ -41,21 +27,15 @@ class CreateInvoiceRequest(CustomerInfoMixin):
 
 class CreateInvoiceResponse(BaseModel):
     invoiceId: str = Field(..., description="Razorpay Invoice ID (inv_XXXX)")
-    razorpayOrderId: str = Field(..., description="Razorpay Order ID jo invoice ke andar bana")
+    razorpayOrderId: str = Field(..., description="Razorpay Order ID from invoice")
     shortUrl: str = Field(..., description="Razorpay-hosted invoice payment link")
-    amount: int = Field(..., description="Amount paise mein")
+    amount: int = Field(..., description="Amount in paise")
     currency: str = Field(default="INR")
     status: str = Field(..., description="Invoice status (issued/draft/paid)")
-    keyId: str = Field(..., description="Razorpay public key ID -- checkout.js ke liye")
+    keyId: str = Field(..., description="Razorpay public key ID for checkout.js")
 
-
-# =========================================================
-# PAYMENT VERIFICATION -- SECOND STEP
-# =========================================================
 
 class VerifyPaymentRequest(OrderIdMixin):
-    """POST /api/payment/verify-payment -- checkout success ke baad."""
-
     razorpay_payment_id: str = Field(..., description="Razorpay Payment ID (pay_XXXX format)")
     razorpay_signature: str = Field(..., description="HMAC-SHA256 signature for verification")
 
@@ -70,8 +50,6 @@ class VerifyPaymentRequest(OrderIdMixin):
 
 
 class PaymentFailedRequest(OrderIdMixin):
-    """POST /api/payment/payment-failed -- jab user cancel kare ya payment fail ho."""
-
     reason: Optional[str] = Field(default=None, description="Failure reason (optional)")
 
     class Config:
@@ -82,10 +60,6 @@ class PaymentFailedRequest(OrderIdMixin):
             }
         }
 
-
-# =========================================================
-# TRANSACTION READ
-# =========================================================
 
 class TransactionResponse(BaseModel):
     OrderId: str

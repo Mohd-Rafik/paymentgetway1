@@ -1,0 +1,64 @@
+.steps {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  margin-bottom: 2rem;
+}
+
+.step-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.step-dot {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  font-weight: 600;
+  border: 2px solid var(--border);
+  background: var(--surface);
+  color: var(--text-muted);
+  transition: all 0.4s ease;
+  position: relative;
+
+  &.active {
+    border-color: var(--purple-400);
+    background: linear-gradient(135deg, var(--purple-500), var(--indigo-500));
+    color: #fff;
+    box-shadow: 0 0 20px rgba(124, 58, 237, 0.5);
+  }
+
+  &.done {
+    border-color: var(--success);
+    background: var(--success-bg);
+    color: var(--success);
+  }
+}
+
+.step-label {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  font-weight: 500;
+  white-space: nowrap;
+
+  &.active { color: var(--purple-300); }
+  &.done   { color: var(--success); }
+}
+
+.step-line {
+  width: 48px;
+  height: 2px;
+  background: var(--border);
+  margin: 0 0.5rem;
+  border-radius: 2px;
+  transition: background 0.4s ease;
+
+  &.done {
+    background: linear-gradient(90deg, var(--success), var(--purple-500));
+  }
+}

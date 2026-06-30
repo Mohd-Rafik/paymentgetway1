@@ -10,7 +10,6 @@ app = FastAPI(
     version="1.0.0",
 )
 
-
 add_cors_middleware(app)
 
 app.include_router(router, prefix="/api/payment", tags=["Payment"])
@@ -18,7 +17,6 @@ app.include_router(router, prefix="/api/payment", tags=["Payment"])
 
 @app.get("/", summary="Health Check")
 def home():
-    
     return {"success": True, "message": "Payment Gateway Running", "version": "1.0.0"}
 
 

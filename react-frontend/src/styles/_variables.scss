@@ -1,0 +1,33 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
+
+:root {
+  --font: 'Outfit', sans-serif;
+
+  --purple-900: #1a0533;
+  --purple-800: #2d0a57;
+  --purple-700: #4a1080;
+  --purple-500: #7c3aed;
+  --purple-400: #a855f7;
+  --purple-300: #c084fc;
+  --indigo-500: #6366f1;
+  --pink-500:   #ec4899;
+
+  --bg:         #0d0117;
+  --surface:    rgba(255, 255, 255, 0.04);
+  --surface-2:  rgba(255, 255, 255, 0.08);
+  --border:     rgba(255, 255, 255, 0.10);
+  --border-glow:rgba(124, 58, 237, 0.45);
+
+  --text-primary:   #f0e8ff;
+  --text-secondary: #a78bca;
+  --text-muted:     #6b5a85;
+
+  --success:    #10b981;
+  --success-bg: rgba(16, 185, 129, 0.12);
+  --error:      #f43f5e;
+  --error-bg:   rgba(244, 63, 94, 0.12);
+
+  --shadow-card: 0 8px 32px rgba(0, 0, 0, 0.6), 0 0 0 1px var(--border);
+  --shadow-glow: 0 0 40px rgba(124, 58, 237, 0.25);
+  --shadow-btn:  0 4px 20px rgba(124, 58, 237, 0.5);
+}

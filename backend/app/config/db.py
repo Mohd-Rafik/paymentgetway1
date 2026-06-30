@@ -1,10 +1,10 @@
 import os
 import pyodbc
 from dotenv import load_dotenv
- 
+
 load_dotenv()
- 
- 
+
+
 def get_connection():
     trusted = os.environ.get("DB_TRUSTED_CONNECTION", "no").lower() == "yes"
 
