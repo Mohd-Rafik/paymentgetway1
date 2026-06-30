@@ -2,8 +2,8 @@ services:
   - type: web
     name: securepay-backend
     runtime: python
-    rootDir: backend
-    buildCommand: pip install --upgrade setuptools && pip install -r requirements.txt
+    pythonVersion: "3.12.10"
+    buildCommand: pip install --upgrade pip setuptools && pip install -r requirements.txt
     startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
     envVars:
       - key: RAZORPAY_KEY_ID
