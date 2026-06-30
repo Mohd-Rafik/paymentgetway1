@@ -21,9 +21,12 @@ def verify_payment_signature(razorpay_order_id: str, razorpay_payment_id: str, r
 
 
 def verify_webhook_signature(payload_body: bytes, received_signature: str) -> bool:
-    webhook_secret = os.environ["RAZORPAY_WEBHOOK_SECRET"]
+    webhook_secret = os.environ.get("RAZORPAY_WEBHOOK_SECRET", "")
+    if not webhook_secret:
+        log_exception("RAZORPAY_WEBHOOK_SECRET not set")
+        return False
     generated_signature = hmac.new(
-        webhook_secret.encode(),
+        webhook_secret.encode("utf-8"),
         payload_body,
         hashlib.sha256
     ).hexdigest()

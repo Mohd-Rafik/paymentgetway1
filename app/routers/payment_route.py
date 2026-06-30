@@ -64,21 +64,54 @@ async def razorpay_webhook(request: Request):
     received_signature = request.headers.get("X-Razorpay-Signature", "")
 
     if not verify_webhook_signature(raw_body, received_signature):
-        log_exception("Webhook signature mismatch")
+        log_exception("Webhook signature mismatch — possible spoofed request")
         raise HTTPException(status_code=400, detail="Invalid webhook signature")
 
-    payload = await request.json()
-    event = payload.get("event")
-    log_info(f"Webhook received: {event}")
+    try:
+        payload = await request.json()
+    except Exception:
+        raise HTTPException(status_code=400, detail="Invalid JSON payload")
+
+    event = payload.get("event", "")
+    log_info(f"Webhook event received: {event}")
 
     if event == "payment.captured":
         entity = payload["payload"]["payment"]["entity"]
-        update_transaction_from_webhook(entity["order_id"], entity["id"], entity.get("method"))
+        update_transaction_from_webhook(
+            entity["order_id"],
+            entity["id"],
+            entity.get("method")
+        )
 
     elif event == "payment.failed":
         entity = payload["payload"]["payment"]["entity"]
-        reason = entity.get("error_description", "Payment failed")
+        reason = entity.get("error_description") or entity.get("error_code") or "Payment failed"
         mark_payment_failed(entity["order_id"], reason)
+
+    elif event == "invoice.paid":
+        entity = payload["payload"]["invoice"]["entity"]
+        order_id = entity.get("order_id")
+        payment_id = entity.get("payment_id")
+        if order_id and payment_id:
+            update_transaction_from_webhook(order_id, payment_id, None)
+        log_info(f"Invoice paid webhook: invoice_id={entity.get('id')} order_id={order_id}")
+
+    elif event == "order.paid":
+        entity = payload["payload"]["order"]["entity"]
+        order_id = entity.get("id")
+        payment = payload["payload"].get("payment", {}).get("entity", {})
+        payment_id = payment.get("id")
+        method = payment.get("method")
+        if order_id and payment_id:
+            update_transaction_from_webhook(order_id, payment_id, method)
+        log_info(f"Order paid webhook: order_id={order_id}")
+
+    elif event == "refund.created":
+        entity = payload["payload"]["refund"]["entity"]
+        log_info(f"Refund created: refund_id={entity.get('id')} order_id={entity.get('notes', {}).get('order_id', 'N/A')}")
+
+    else:
+        log_info(f"Unhandled webhook event: {event}")
 
     return {"status": "ok"}
 
