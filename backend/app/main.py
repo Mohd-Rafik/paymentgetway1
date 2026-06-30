@@ -1,24 +1,30 @@
 from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 
-from app.routers.onboarding import router as onboarding_router
+from app.routers.payment_route import router
+from app.middleware.cors import add_cors_middleware
 
-app = FastAPI()
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=[
-        "http://localhost:5173",
-        "http://127.0.0.1:5173",
-    ],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+app = FastAPI(
+    title="Razorpay Payment Gateway",
+    description="SecurePay — FastAPI backend for Razorpay payment integration",
+    version="1.0.0",
 )
 
-app.include_router(onboarding_router)
+
+add_cors_middleware(app)
+
+app.include_router(router, prefix="/api/payment", tags=["Payment"])
 
 
-@app.get("/")
+@app.get("/", summary="Health Check")
 def home():
-    return {"status": "success", "message": "API Running", "data": None}
+    
+    return {"success": True, "message": "Payment Gateway Running", "version": "1.0.0"}
+
+
+@app.exception_handler(Exception)
+async def global_exception_handler(request, exc):
+    return JSONResponse(
+        status_code=500,
+        content={"success": False, "message": "Internal server error", "error": str(exc)}
+    )
