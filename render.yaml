@@ -2,8 +2,9 @@ services:
   - type: web
     name: securepay-backend
     runtime: python
+    rootDir: backend
     pythonVersion: "3.12.10"
-    buildCommand: pip install --upgrade pip setuptools && pip install -r requirements.txt
+    buildCommand: pip install --upgrade pip setuptools wheel && pip install -r requirements.txt
     startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
     envVars:
       - key: RAZORPAY_KEY_ID
@@ -11,8 +12,6 @@ services:
       - key: RAZORPAY_KEY_SECRET
         sync: false
       - key: RAZORPAY_WEBHOOK_SECRET
-        sync: false
-      - key: DB_DRIVER
         sync: false
       - key: DB_SERVER
         sync: false
@@ -22,5 +21,3 @@ services:
         sync: false
       - key: DB_PWD
         sync: false
-      - key: DB_TRUSTED_CONNECTION
-        value: "no"

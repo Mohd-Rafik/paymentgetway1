@@ -1,7 +1,0 @@
-setuptools
-fastapi
-uvicorn[standard]
-pydantic[email]
-python-dotenv==1.0.1
-pyodbc
-razorpay==1.4.2

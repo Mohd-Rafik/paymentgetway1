@@ -1,4 +1,9 @@
+import os
 from fastapi.middleware.cors import CORSMiddleware
+
+# Read extra allowed origins from env (for production flexibility)
+_extra = os.environ.get("ALLOWED_ORIGINS", "")
+_extra_origins = [o.strip() for o in _extra.split(",") if o.strip()]
 
 ALLOWED_ORIGINS = [
     "http://localhost:3000",
@@ -6,8 +11,10 @@ ALLOWED_ORIGINS = [
     "http://localhost:5173",
     "http://127.0.0.1:3000",
     "http://127.0.0.1:5173",
+    # Render deployed frontend URLs
+    "https://securepay-frontend.onrender.com",
     "https://paymentgetway1.onrender.com",
-]
+] + _extra_origins
 
 
 def add_cors_middleware(app) -> None:

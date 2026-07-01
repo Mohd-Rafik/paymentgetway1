@@ -1,7 +1,7 @@
 from datetime import date, datetime
 from decimal import Decimal
 
-import pyodbc
+import pymssql
 
 from app.utils.logger import log_info, log_exception
 
@@ -22,7 +22,7 @@ def execute_stored_procedure(conn, procedure_name: str, params: tuple = (), fetc
         cursor = conn.cursor()
 
         if params:
-            placeholders = ", ".join(["?"] * len(params))
+            placeholders = ", ".join(["%s"] * len(params))
             query = f"EXEC {procedure_name} {placeholders}"
         else:
             query = f"EXEC {procedure_name}"
@@ -41,15 +41,21 @@ def execute_stored_procedure(conn, procedure_name: str, params: tuple = (), fetc
 
         return {"success": True, "message": "Stored procedure executed successfully", "data": data, "error": None}
 
-    except pyodbc.Error as e:
+    except pymssql.Error as e:
         if conn:
-            conn.rollback()
+            try:
+                conn.rollback()
+            except Exception:
+                pass
         log_exception(f"Database error in {procedure_name}: {str(e)}")
         return {"success": False, "message": "Database error", "data": None, "error": str(e)}
 
     except Exception as e:
         if conn:
-            conn.rollback()
+            try:
+                conn.rollback()
+            except Exception:
+                pass
         log_exception(f"Internal error in {procedure_name}: {str(e)}")
         return {"success": False, "message": "Internal server error", "data": None, "error": str(e)}
 

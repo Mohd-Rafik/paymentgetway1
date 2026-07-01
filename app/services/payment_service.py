@@ -119,7 +119,7 @@ def get_transaction(order_id: str):
     conn = get_connection()
     try:
         cursor = conn.cursor()
-        cursor.execute("SELECT * FROM vw_ActiveTransactions WHERE OrderId = ?", order_id)
+        cursor.execute("SELECT * FROM vw_ActiveTransactions WHERE OrderId = %s", (order_id,))
         row = cursor.fetchone()
         if not row:
             return None

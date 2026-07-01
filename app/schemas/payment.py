@@ -2,28 +2,26 @@ from typing import Optional
 from pydantic import BaseModel, EmailStr, Field
 
 
-class OrderIdMixin(BaseModel):
-    razorpay_order_id: str = Field(..., description="Razorpay Order ID (order_XXXX format)")
+# ─── Request Schemas ──────────────────────────────────────────────────────────
 
-
-class CustomerInfoMixin(BaseModel):
+class CreateInvoiceRequest(BaseModel):
     name: str = Field(..., min_length=1, max_length=100, description="Customer full name")
     email: EmailStr = Field(..., description="Customer email address")
     address: str = Field(default="", max_length=500, description="Address (optional)")
     amount: float = Field(..., gt=0, description="Payment amount in INR")
 
+class VerifyPaymentRequest(BaseModel):
+    razorpay_order_id: str = Field(..., description="Razorpay Order ID (order_XXXX format)")
+    razorpay_payment_id: str = Field(..., description="Razorpay Payment ID (pay_XXXX format)")
+    razorpay_signature: str = Field(..., description="HMAC-SHA256 signature for verification")
 
-class CreateInvoiceRequest(CustomerInfoMixin):
-    class Config:
-        json_schema_extra = {
-            "example": {
-                "name": "Rafik Ahmed",
-                "email": "rafik@example.com",
-                "address": "123 Street, Hyderabad",
-                "amount": 499.00
-            }
-        }
 
+class PaymentFailedRequest(BaseModel):
+    razorpay_order_id: str = Field(..., description="Razorpay Order ID (order_XXXX format)")
+    reason: Optional[str] = Field(default=None, description="Failure reason (optional)")
+
+
+# ─── Response Schemas ─────────────────────────────────────────────────────────
 
 class CreateInvoiceResponse(BaseModel):
     invoiceId: str = Field(..., description="Razorpay Invoice ID (inv_XXXX)")
@@ -33,32 +31,6 @@ class CreateInvoiceResponse(BaseModel):
     currency: str = Field(default="INR")
     status: str = Field(..., description="Invoice status (issued/draft/paid)")
     keyId: str = Field(..., description="Razorpay public key ID for checkout.js")
-
-
-class VerifyPaymentRequest(OrderIdMixin):
-    razorpay_payment_id: str = Field(..., description="Razorpay Payment ID (pay_XXXX format)")
-    razorpay_signature: str = Field(..., description="HMAC-SHA256 signature for verification")
-
-    class Config:
-        json_schema_extra = {
-            "example": {
-                "razorpay_order_id": "order_Abc123XYZ",
-                "razorpay_payment_id": "pay_Xyz789ABC",
-                "razorpay_signature": "abc123def456..."
-            }
-        }
-
-
-class PaymentFailedRequest(OrderIdMixin):
-    reason: Optional[str] = Field(default=None, description="Failure reason (optional)")
-
-    class Config:
-        json_schema_extra = {
-            "example": {
-                "razorpay_order_id": "order_Abc123XYZ",
-                "reason": "User dismissed checkout"
-            }
-        }
 
 
 class TransactionResponse(BaseModel):

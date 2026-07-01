@@ -1,7 +1,8 @@
 setuptools
-fastapi
-uvicorn[standard]
-pydantic[email]
+fastapi==0.115.12
+uvicorn[standard]==0.34.3
+pydantic[email]==2.11.7
 python-dotenv==1.0.1
-pyodbc
-razorpay==1.4.2
+pymssql>=2.3.4
+razorpay==2.0.1
+email-validator==2.2.0

@@ -28,6 +28,6 @@ def verify_webhook_signature(payload_body: bytes, received_signature: str) -> bo
     generated_signature = hmac.new(
         webhook_secret.encode("utf-8"),
         payload_body,
-        hashlib.sha256
+        hashlib.sha256,
     ).hexdigest()
     return hmac.compare_digest(generated_signature, received_signature)
