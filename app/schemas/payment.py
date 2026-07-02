@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Any
 from pydantic import BaseModel, EmailStr, Field
 
 
@@ -43,4 +43,9 @@ class TransactionResponse(BaseModel):
     PaymentId: Optional[str] = None
     PaymentMethod: Optional[str] = None
     InvoiceUrl: Optional[str] = None
-    CreatedAt: Optional[str] = None
+    CreatedAt: Optional[Any] = None  # datetime from DB serialized to ISO string
+
+    class Config:
+        json_encoders = {
+            __import__("datetime").datetime: lambda v: v.isoformat(),
+        }
