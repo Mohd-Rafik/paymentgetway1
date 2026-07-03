@@ -1,13 +1,16 @@
 # Python
 venv/
 __pycache__/
+**/__pycache__/
 *.py[cod]
 *.pyo
 *.pyd
 .Python
+*.pyc
 
 # Environment
 .env
 
-# Render
+# Render / Logs
 *.log
+logs/

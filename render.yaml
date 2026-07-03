@@ -13,11 +13,7 @@ services:
         sync: false
       - key: RAZORPAY_WEBHOOK_SECRET
         sync: false
-      - key: DB_SERVER
+      - key: DATABASE_URL
         sync: false
-      - key: DB_NAME
-        sync: false
-      - key: DB_UID
-        sync: false
-      - key: DB_PWD
+      - key: ALLOWED_ORIGINS
         sync: false

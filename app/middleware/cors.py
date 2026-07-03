@@ -11,9 +11,13 @@ ALLOWED_ORIGINS = [
     "http://localhost:5173",
     "http://127.0.0.1:3000",
     "http://127.0.0.1:5173",
+    # ── Render deployed URLs ─────────────────────────────────────────────────
+    "https://paymentgetwayfrontend-2.onrender.com",  # ✅ actual frontend
+    "https://paymentgetway-g49v.onrender.com",        # backend /docs self-calls
     "https://securepay-frontend.onrender.com",
     "https://paymentgetway1.onrender.com",
 ] + _extra_origins
+
 
 
 def add_cors_middleware(app) -> None:
